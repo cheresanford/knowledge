@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    container_name: curso-app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./knowledge/versao-inicial/backend:/app
+      - node_modules_volume:/app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/mydb
+    depends_on:
+      - db
+  db:
+    image: postgres:13-alpine
+    container_name: curso-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: curso-pgadmin
+    ports:
+      - "80:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  postgres_data:
+  node_modules_volume:
+  pgadmin_data:
